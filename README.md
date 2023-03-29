@@ -53,12 +53,12 @@ Expand 'Permissions', set 'Project visibility' to 'Private', and then save chang
 
 > <img src="/pictures/change_permission2.png"  width="500"> 
 ---
-### 3. **Provide "Maintainer" access to your lab partner, to your lab assistant, and to Jose M. Pena**
+### 3. **Provide "Maintainer" access to your lab partner, to your lab assistant, and to Mohammad Seidpisheh**
 
 Find the "Settings" button on the left of the page about your forked repository, and click 'Members' to add people who can access your repository.
 * Add your partner
 * Add your lab assistant 
-* Add jose.m.pena@liu.se
+* Add mohammad.seidpisheh@liu.se
 
 > <img src="/pictures/add_member1.png"  width="500"> 
 ---
@@ -87,6 +87,6 @@ If there is no such file in the directory, you may upload files from your comput
 > <img src="/pictures/upload.png"  width="500"> 
 ---
 ### 6. Submit by sending an email with a link to the repository
-To submit a solution to your lab assignment, *email a link of your repository* to your lab assistant (BDA3 must be sent to jose.m.pena@liu.se	); the subject for that email *must* adhere to the following pattern: **CourseCode_Year_labCode_userName1_userName2** 
+To submit a solution to your lab assignment, *email a link of your repository* to your lab assistant (BDA3 must be sent to mohammad.seidpisheh@liu.se ); the subject for that email *must* adhere to the following pattern: **CourseCode_Year_labCode_userName1_userName2** 
 (e.g., TDDE31_2020_BDA3_hrsdv94_dgjjt92).
 
