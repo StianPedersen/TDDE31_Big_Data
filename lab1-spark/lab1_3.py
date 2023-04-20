@@ -9,10 +9,13 @@ lines = temperature_file.map(lambda line: line.split(";"))
 year_temperature = lines.filter(lambda x: int(x[1][0:4])>=1960 or int(x[1][0:4])<=2014)
 key_thing = year_temperature.map(lambda x: ((x[0], x[1][0:7]), float(x[3])))
 max_key_thing = key_thing.reduceByKey(lambda x,y: max(x,y))
+min_key_thing = key_thing.reduceByKey(lambda x,y: min(x,y))
 
-# min_key_thing = key_thing.reduceByKey(lambda x,y: min(x,y))
+joined_min_max = max_key_thing.join(min_key_thing)
 
-max_key_thing.saveAsTextFile("BDA/output")
+average = joined_min_max.map(lambda x: float((float(x[1][0]) + float(x[1][1])) / 2))
+
+average.saveAsTextFile("BDA/output")
 
 #above_10_temp = year_temperature.filter(lambda x: float(x[3]) > 10.0)
 #key_thing  = above_10_temp.map(lambda x: (x[1][0:7], 1) ).reduceByKey(lambda x,y: x+y)
@@ -20,4 +23,3 @@ max_key_thing.saveAsTextFile("BDA/output")
 #key_thing = above_10_temp.map(lambda x: (x[0], x[1][0:7])).distinct()
 #key_thing  = key_thing.map(lambda x: ((x[1][0:7]), 1)).reduceByKey(lambda x,y: x+y )
 #key_thing.saveAsTextFile("BDA/output")
-
