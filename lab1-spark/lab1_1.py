@@ -23,6 +23,7 @@ min_temperatures = min_temperatures.sortBy(ascending = False, keyfunc=lambda k: 
 
 # union the minimum tempratures
 un = min_temperatures.union(max_temperatures)
+un = un.map(lambda x: (x[0], x[1][1]))
 un = un.sortByKey()
 # Following code will save the result into /user/ACCOUNT_NAME/BDA/output folder
 un.saveAsTextFile("BDA/output")

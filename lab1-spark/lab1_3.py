@@ -18,6 +18,6 @@ min_key_thing = key_thing.reduceByKey(lambda x,y: min(x,y))
 joined_min_max = max_key_thing.join(min_key_thing)
 
 # Desired output format with avarage over the min/max
-average = joined_min_max.map(lambda x: (x[0][1][0:4],x[0][1][5:7],x[0][0],float((float(x[1][0]) + float(x[1][1])) / 2)))
-avarage = avarage.sortBy(ascending = False, keyfunc=lambda x: x[0] and x[1])
+average = joined_min_max.map(lambda x: (x[0][1], x[0][0],float((float(x[1][0]) + float(x[1][1])) / 2)))
+avarage = avarage.sortBy(ascending = False, keyfunc=lambda x: x[0])
 average.saveAsTextFile("BDA/output")
