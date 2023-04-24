@@ -3,7 +3,7 @@ from operator import add
 
 sc = SparkContext(appName = "exercise 1")
 # This path is to the file on hdfs
-temperature_file = sc.textFile("BDA/input/temperature-readings-small.csv")
+temperature_file = sc.textFile("BDA/input/temperature-readings.csv")
 lines = temperature_file.map(lambda line: line.split(";"))
 
 year_temperature = lines.filter(lambda x: int(x[1][0:4])>=1960 or int(x[1][0:4])<=2014)
@@ -13,13 +13,6 @@ min_key_thing = key_thing.reduceByKey(lambda x,y: min(x,y))
 
 joined_min_max = max_key_thing.join(min_key_thing)
 
-average = joined_min_max.map(lambda x: float((float(x[1][0]) + float(x[1][1])) / 2))
+average = joined_min_max.map(lambda x: (x[0][1][0:4],x[0][1][5:7],x[0][0],float((float(x[1][0]) + float(x[1][1])) / 2)))
 
 average.saveAsTextFile("BDA/output")
-
-#above_10_temp = year_temperature.filter(lambda x: float(x[3]) > 10.0)
-#key_thing  = above_10_temp.map(lambda x: (x[1][0:7], 1) ).reduceByKey(lambda x,y: x+y)
-
-#key_thing = above_10_temp.map(lambda x: (x[0], x[1][0:7])).distinct()
-#key_thing  = key_thing.map(lambda x: ((x[1][0:7]), 1)).reduceByKey(lambda x,y: x+y )
-#key_thing.saveAsTextFile("BDA/output")
