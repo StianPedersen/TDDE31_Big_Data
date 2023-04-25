@@ -10,10 +10,10 @@ lines = temperature_file.map(lambda line: line.split(";"))
 reduced = lines.map(lambda x: (x[0], float(x[3])))
 
 # Filter out the tempratures outside 25-30
-temperature_filtered = reduced.filter(lambda x: float(x[1])>=25.0 and float(x[1])<=30.0)
-# Get the maximum tempratures for the stations
-temperature_filtered = temperature_filtered.reduceByKey(lambda x,y: max(x,y))
 
+# Get the maximum tempratures for the stations
+temperature_filtered = reduced.reduceByKey(lambda x,y: max(x,y))
+temperature_filtered = temperature_filtered.filter(lambda x: float(x[1])>=25.0 and float(x[1])<=30.0)
 
 # Precipation
 precipation_file = sc.textFile("BDA/input/precipitation-readings.csv")
@@ -27,11 +27,12 @@ grouped_precipation = precipation_reduced.groupByKey()
 precipation_added = grouped_precipation.map(lambda x: (x[0][0],sum(x[1])))
 
 # Get only stations with percipation between 100 -> 200
-precipation_filtered = precipation_added.filter(lambda x: float(x[1])>=100 and float(x[1])<=200)
+
 # Keep only the max
-precipation_max = precipation_filtered.reduceByKey(lambda x,y: max(x,y))
+precipation_max = precipation_added.reduceByKey(lambda x,y: max(x,y))
+precipation_filtered = precipation_max.filter(lambda x: float(x[1])>=100 and float(x[1])<=200)
 
 # join precipation and temperature
-last = temperature_filtered.join(precipation_max)
+last = temperature_filtered.join(precipation_filtered)
 last = last.sortBy(ascending = False, keyfunc=lambda x: x[0])
 last.saveAsTextFile("BDA/output")
