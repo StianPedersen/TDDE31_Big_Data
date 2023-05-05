@@ -19,5 +19,7 @@ tmp_schema = schemaTempReadings.filter( (schemaTempReadings['year'] >= 1960) & (
 
 lab2_3 = tmp_schema.groupBy(tmp_schema['year'],tmp_schema['month'],tmp_schema['station']).agg(F.avg(tmp_schema['temp']).alias('avgtemp'))
 lab2_3 = lab2_3.orderBy(lab2_3['avgtemp'],ascending=False)
+print("ABCDE")
+lab2_3.show()
 last = lab2_3.rdd
 last.saveAsTextFile("BDA/output")

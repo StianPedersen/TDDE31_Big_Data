@@ -25,6 +25,7 @@ perc_grouped_ym = perc_grouped.join(ost_stations, ['station'],'inner').select('y
 # Should have all the correct stations
 perc_grouped_ym = perc_grouped_ym.groupBy(perc_grouped_ym['year'],perc_grouped_ym['month']).agg(F.avg(perc_grouped_ym['sum_rain']).alias('avg_rain'))
 lab2_5 = perc_grouped_ym.orderBy(perc_grouped_ym['year'],perc_grouped_ym['month'],ascending=False)
-# last
+print("ABCDE")
+lab2_5.show()
 last = lab2_5.rdd
 last.saveAsTextFile("BDA/output")
