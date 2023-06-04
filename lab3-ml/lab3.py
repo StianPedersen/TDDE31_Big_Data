@@ -50,7 +50,7 @@ h_date = 15
 h_time = 3
 longitud = 58.4274 # Up to youl
 latitud  = 14.826 # Up to you
-date = "2013-07-04" # Up to you
+date = "2013-01-01" # Up to you
 stations = sc.textFile("BDA/input/stations.csv")
 stations = stations.map(lambda line: line.split(";"))
 temps = sc.textFile("BDA/input/temperature-readings.csv")
@@ -73,18 +73,25 @@ st_list = sc.broadcast(stations_list.collectAsMap())
 merged_temp = temps.map(lambda x: (  (x[0][0], x[0][1],  x[1][0]), (x[1][1], st_list.value.get(x[0][0]))   ))
 # ((u'114410', u'1998-06-01', u'11:00:00'), (u'3.4', (61.6606, 14.9948)))
 st_list.unpersist()
-merged_temp = merged_temp.cache()
 sum_list = []
 mult_list = []
 for time in ["24:00:00", "22:00:00", "20:00:00", "18:00:00", "16:00:00", "14:00:00","12:00:00", "10:00:00", "08:00:00", "06:00:00", "04:00:00"]:
     # Your code here
     # (temp) (datekernel, timekernel, distancekernel)
+
+    ######################################################################
+    # COMMENT-3 ADDED HOURLY FILTER FOR TIMES BEFORE THE TIME WE WANT TO PREDICT!
+    merged_temp = merged_temp.filter(lambda x: ((int(x[0][2][0:2]) < int(time[0:2])) & (int(x[0][1][0:4]) <= int(date[0:4]))&(int(x[0][1][5:7]) <= int(date[5:7])) & (int(x[0][1][8:10]) <= int(date[8:10]))))
+    merged_temp = merged_temp.cache() # ADDED CACHE COMMENT 5
+    ######################################################################
+
     kernels = merged_temp.map(lambda x: ((x[1][0]), (dateDiff(date,x[0][1],h_date), timeDiff(x[0][2],time, h_time),distanceDiff(longitud,latitud,x[1][1][0],x[1][1][1], h_distance)) ) )
     ####### SUM ########
     sum = kernels.map(lambda x: (1, ( (float(x[0]) * (x[1][0] + x[1][1] + x[1][2])), (x[1][0] + x[1][1] + x[1][2])) ))
     summ = sum.reduceByKey(lambda a,b: (a[0]+b[0], a[1]+b[1]))
     predSum=summ.mapValues(lambda x: (x[0]/x[1])).collectAsMap()
     sum_list.append((time, predSum.get(1)))
+
     ####### MULT ########
     mult = kernels.map(lambda x: (1, ( (float(x[0]) * (x[1][0] * x[1][1] * x[1][2])), (x[1][0] * x[1][1] * x[1][2])) ))
     multiply_Added = mult.reduceByKey(lambda a,b: (a[0]+b[0], a[1]+b[1]))
@@ -95,5 +102,5 @@ print("THE OUTPUT: ")
 print(sum_list)
 print(mult_list)
 
-last = merged_temp
-last.saveAsTextFile("BDA/output")
+# last = st_list
+# last.saveAsTextFile("BDA/output")

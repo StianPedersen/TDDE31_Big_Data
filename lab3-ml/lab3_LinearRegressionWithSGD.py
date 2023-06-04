@@ -4,11 +4,7 @@ from datetime import datetime
 from pyspark import SparkContext
 from pyspark.ml.feature import VectorAssembler
 from pyspark.mllib.regression import LabeledPoint, LinearRegressionWithSGD, LinearRegressionModel,RidgeRegressionWithSGD
-from pyspark.mllib.classification import SVMWithSGD
-from pyspark.mllib.clustering import GaussianMixture
-
-
-
+from pyspark.mllib.regression import LabeledPoint
 from datetime import datetime
 import numpy as np
 
@@ -56,7 +52,7 @@ def timeDiff(time1, time2):
   return difference
 # Your code here
 # Filter Code
-date = "2013-01-01" # Up to you
+date = "2013-01-01"  # Up to you
 longitud = 58.4274 # Up to youl
 latitud  = 14.826 # Up to you
 temps = temps.filter(lambda x: int(x[1][0:4]) <= int(date[0:4]))
@@ -82,10 +78,10 @@ calculated_list.cache()
 def parsePoint(values):
     return LabeledPoint(values[0], values[1:])
 
-
 modellist = []
 for time in ["24:00:00", "22:00:00", "20:00:00", "18:00:00", "16:00:00", "14:00:00","12:00:00", "10:00:00", "08:00:00", "06:00:00", "04:00:00"]:
     data = [int(date[0:4]),int(date[5:7]),int(date[8:10]),int(time[0:2]),longitud,latitud]
+
     # COMMENT 3 ADDED HOURLY FILTER (SAME AS IN LAB3)
     calculated_list = calculated_list.filter(lambda x: ((int(x[4]) < int(time[0:2])) & (int(x[1]) <= int(date[0:4]))&(int(x[2]) <= int(date[5:7])) & (int(x[3]) <= int(date[8:10]))))
     calculated_list = calculated_list.cache() # ADDED CACHE COMMENT 5
@@ -93,7 +89,7 @@ for time in ["24:00:00", "22:00:00", "20:00:00", "18:00:00", "16:00:00", "14:00:
     #################################################
 
     # COMMENT 4 TRAINING INSIDE FOR LOOP
-    model =  RidgeRegressionWithSGD.train(featval, iterations=10,initialWeights=np.array([1.0,1.0,1.0,1.0,1.0,1.0]))
+    model = LinearRegressionWithSGD.train(featval, iterations=100, step=0.00000001)
     #################################################
 
     res1 = model.predict(np.array(data))

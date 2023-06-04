@@ -52,7 +52,7 @@ def timeDiff(time1, time2):
   return difference
 # Your code here
 # Filter Code
-date = "2013-07-04" # Up to you
+date = "2013-01-01" # Up to you
 longitud = 58.4274 # Up to youl
 latitud  = 14.826 # Up to you
 temps = temps.filter(lambda x: int(x[1][0:4]) <= int(date[0:4]))
@@ -77,23 +77,27 @@ calculated_list.cache()
 
 def parsePoint(values):
     return LabeledPoint(values[0], values[1:])
-featval = calculated_list.map(parsePoint)
 
 # Model 1
-model = LassoWithSGD.train(featval, iterations=10, initialWeights=np.array([1.0,1.0,1.0,1.0,1.0,1.0]))
 print("HEYHO")
 modellist = []
 for time in ["24:00:00", "22:00:00", "20:00:00", "18:00:00", "16:00:00", "14:00:00","12:00:00", "10:00:00", "08:00:00", "06:00:00", "04:00:00"]:
+    # COMMENT 3 ADDED HOURLY FILTER (SAME AS IN LAB3)
+    calculated_list = calculated_list.filter(lambda x: ((int(x[4]) < int(time[0:2])) & (int(x[1]) <= int(date[0:4]))&(int(x[2]) <= int(date[5:7])) & (int(x[3]) <= int(date[8:10]))))
+    calculated_list = calculated_list.cache() # ADDED CACHE COMMENT 5
+    featval = calculated_list.map(parsePoint)
+    #################################################
+
+    # COMMENT 4 TRAINING INSIDE FOR LOOP
+    model = LassoWithSGD.train(featval, iterations=10, initialWeights=np.array([1.0,1.0,1.0,1.0,1.0,1.0]))
+    #################################################
+
     data = [int(date[0:4]),int(date[5:7]),int(date[8:10]),int(time[0:2]),longitud,latitud]
     res1 = model.predict(np.array(data))
-    # res2 = model2.predict(np.array(data))
+
     print(res1)
     modellist.append((time[0:2],res1))
-    # model2list.append(res2)
+
 
 print("KOM IGJEN")
 print(modellist)
-# print(model2list)
-
-# last = calculated_list
-# last.saveAsTextFile("BDA/output")
